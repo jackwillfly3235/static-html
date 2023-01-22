@@ -1,4 +1,5 @@
 export type Page = {
+  path: string,
   name: string,
   url: string,
   title: string,

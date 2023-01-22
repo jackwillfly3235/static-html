@@ -21,6 +21,7 @@ export type WebsiteConfig = {
 };
 
 export type PageConfig = {
+  path: string,
   name: string,
   title: string,
   scripts?: Array<string>,
@@ -51,9 +52,10 @@ export class Builder {
       keywords: websiteConfig.keywords ?? [],
       pages: websiteConfig.pages?.reduce<Record<string, Page>>((pages, page) => {
         pages[this.hyphensToCamelCase(page.name)] = {
+          path: page.path,
           name: page.name,
           title: page.title,
-          url: page.name === 'index' ? '/' : `/${page.name}`,
+          url: page.name === 'index' ? '/' : `${page.path}/${page.name}`,
           isActive: false,
           scripts: page.scripts?.map((script) => {
             return `<script src="${script}"></script>`;
@@ -143,7 +145,10 @@ export class Builder {
     const htmlResult = await this.renderer.render(page);
 
     // Write result file
-    fs.writeFileSync(`${this.targetDirectory}/${page.name}.html`, htmlResult);
+    if(page.path !== ""){
+      fs.mkdirSync(this.targetDirectory + `/${page.path}`);
+    }
+    fs.writeFileSync(`${this.targetDirectory}/${page.path}/${page.name}.html`, htmlResult);
   }
 
   async build(): Promise<void> {
