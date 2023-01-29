@@ -12,7 +12,7 @@ export class Renderer {
   }
 
   private async renderPageContent(page: Page): Promise<string> {
-    const pagePath = `${this.sourceDirectory}/pages/${page.name}.ts`;
+    const pagePath = page.path === '' ? `${this.sourceDirectory}/pages/${page.name}.ts` : `${this.sourceDirectory}/pages/${page.path}/${page.name}.ts`;
     const {default: renderPage}: {
       default: (data: Record<string, any>, page: Page, website: Website) => Promise<string> | string,
     } = require(pagePath);
